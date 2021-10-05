@@ -1,9 +1,11 @@
 import numpy as np
+import logging
+from tqdm import tqdm
 
 class Perceptron:
   def __init__(self, eta, epochs):
     self.weights = np.random.randn(3) * 1e-4 # small weight INIT
-    print(f"initial weights before training: \n{self.weights}")
+    logging.info(f"initial weights before training: \n{self.weights}")
     self.eta = eta # Learning rate
     self.epochs = epochs
 
@@ -17,19 +19,19 @@ class Perceptron:
     self.y = y
 
     X_with_bias = np.c_[self.X, -np.ones((len(self.X), 1))] # Concatenation
-    print(f"X with bias: \n{X_with_bias}")
+    logging.info(f"X with bias: \n{X_with_bias}")
 
-    for epoch in range(1,self.epochs+1):
-      print("--" * 10)
-      print(f"for epoch: {epoch}")
+    for epoch in tqdm(range(1,self.epochs+1), total=self.epochs, desc="training the model"):
+      logging.info("--" * 10)
+      logging.info(f"for epoch: {epoch}")
 
       y_hat = self.activationFunction(X_with_bias, self.weights) # forward propogation
-      print(f"predicted value after forward pass: {y_hat}")
+      logging.info(f"predicted value after forward pass: {y_hat}")
       self.error = self.y - y_hat
-      print(f"error: \n{self.error}")
+      logging.info(f"error: \n{self.error}")
       self.weights = self.weights + self.eta * np.dot(X_with_bias.T, self.error) # backward propagation
-      print(f"updated weights after epoch: {epoch}/{self.epochs} \n{self.weights}")
-      print("#####"*10)
+      logging.info(f"updated weights after epoch: {epoch}/{self.epochs} \n{self.weights}")
+      logging.info("#####"*10)
 
 
 
@@ -39,6 +41,6 @@ class Perceptron:
   
   def total_loss(self):
     total_loss = np.sum(self.error)
-    print(f"total_loss: {total_loss}")
+    logging.info(f"total_loss: {total_loss}")
     return total_loss
   

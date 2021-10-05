@@ -1,9 +1,9 @@
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import joblib # used for saving model as binary file
 from matplotlib.colors import ListedColormap
+import logging
 
 plt.style.use("fivethirtyeight") #style for the graphs
 
@@ -17,6 +17,7 @@ def prepare_data(df):
    Returns:
     tuple: It returns the tuple consist of dependent and Independent features
   """
+  logging.info("Preparing the data by segregating dependent and independent variables")
   X = df.drop("y",axis=1)
   y = df["y"]
   return X,y
@@ -28,10 +29,12 @@ def save_model(model, filename):
       model (python object): trained model to
       filename (str): path to save the trained model
     """
+    logging.info("saving the trained model")
     model_dir = "models"
     os.makedirs(model_dir, exist_ok=True) # only create if model dir doesn't exist
     filePath = os.path.join(model_dir,filename) # model/filename
     joblib.dump(model,filePath)
+    logging.info(f"saved the trained model at {filePath}")
 
 def save_plot(df, filename, model):
   """
@@ -40,6 +43,7 @@ def save_plot(df, filename, model):
   :param model: trained model
   """
   def _create_base_plot(df):
+    logging.info("Creating the base plot")
     df.plot(kind="scatter", x="x1", y="x2", c='y', s=100, cmap="winter")
     plt.axhline(y=0, color="black", linestyle="--", linewidth=1)
     plt.axvline(x=0, color="black", linestyle="--", linewidth=1)
@@ -47,6 +51,7 @@ def save_plot(df, filename, model):
     figure.set_size_inches(10,8)
 
   def _plot_decision_regions(X, y, classifier, resolution=0.02):
+    logging.info("Plotting decision regions")
     colors = ("red", "blue", "lightgreen", "gray", "cyan")
     cmap = ListedColormap(colors[:len(np.unique(y))])
     X = X.values # as array
@@ -70,3 +75,4 @@ def save_plot(df, filename, model):
   os.makedirs(plot_dir, exist_ok=True) # only create if plot dir doesn't exist
   plotPath = os.path.join(plot_dir,filename) # model/filename
   plt.savefig(plotPath)
+  logging.info(f"saving the plots at {plotPath}")
